@@ -664,8 +664,7 @@ begin
 
         JS1_GND <= '0';
 
---        O_LED <= control_reg(7 downto 4);
-        o_led <= button_debounced(7 downto 4);
+        O_LED <= control_reg(7 downto 4);
 
         button_in(0) <= JS1_LEFT;
         button_in(1) <= JS1_UP;
@@ -737,11 +736,11 @@ begin
 
 				freeze <= '0';
 				-- closed is low
-				dipsw1_reg(7 downto 6) <= "11";    -- easy
+				dipsw1_reg(7 downto 6) <= "10";    -- medium
 				dipsw1_reg(5) <= '1';              -- normal play
-				dipsw1_reg(4 downto 3) <= "00";    -- 5 pengos
+				dipsw1_reg(4 downto 3) <= "10";    -- 3 pengos
 				dipsw1_reg(2) <= '0';              -- upright
-				dipsw1_reg(1) <= '0';              -- attrack sound on
+				dipsw1_reg(1) <= '1';              -- attrack sound off
 				dipsw1_reg(0) <= '0';              -- bonus at 30K
 
 				dipsw2_reg <= "11001100";          -- 1 coin/1 play

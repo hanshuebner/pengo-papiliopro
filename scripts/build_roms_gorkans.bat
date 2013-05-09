@@ -19,7 +19,7 @@ REM bbcec0570aeceb582ff8238a4bc8546a23430081 *gorkprom.3
 REM 8d0268dee78e47c712202b0ec4f1f51109b1f2a5 *gorkprom.4
 
 set rom_path_src=..\roms\gorkans
-set rom_path=..\build
+set rom_path=..\source
 set romgen_path=..\romgen_source
 
 REM concatenate consecutive ROM regions

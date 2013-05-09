@@ -13,7 +13,7 @@ REM 06ef227747a440831c9a3a613b76693d52a2f0a9 *pacman.5e
 REM 4a937ac02216ea8c96477d4a15522070507fb599 *pacman.5f
 
 set rom_path_src=..\roms\pacman
-set rom_path=..\build
+set rom_path=..\source
 set romgen_path=..\romgen_source
 
 REM concatenate consecutive ROM regions

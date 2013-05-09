@@ -15,7 +15,7 @@ REM ec0b123fd2e6de6681ca14f35fda249b2c2ec44f *wiza
 REM 3ea384a1064302709d97fc16b347d3c012e90ac7 *wizb
 
 set rom_path_src=..\roms\lizwiz
-set rom_path=..\build
+set rom_path=..\source
 set romgen_path=..\romgen_source
 
 REM concatenate consecutive ROM regions

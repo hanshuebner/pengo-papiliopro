@@ -19,7 +19,7 @@ REM c9256795c6d0929ade1f24b372dadc2a2b88d897 *tpc
 REM 65dd7861e05651485626465dc97215fed58db551 *tpd
 
 set rom_path_src=..\roms\crush2
-set rom_path=..\build
+set rom_path=..\source
 set romgen_path=..\romgen_source
 
 REM concatenate consecutive ROM regions

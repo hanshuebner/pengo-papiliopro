@@ -18,7 +18,7 @@ REM 563c9770028fe39188e62630711589d6ed242a66 pr1635.51
 REM 0c4d0bee858b97632411c440bea6948a74759746 pr1636.70
 
 set rom_path_src=..\roms\pengo
-set rom_path=..\build
+set rom_path=..\source
 set romgen_path=..\romgen_source
 
 REM concatenate consecutive ROM regions
