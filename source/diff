@@ -1,0 +1,276 @@
+Index: pacman.vhd
+===================================================================
+--- pacman.vhd	(revision 2)
++++ pacman.vhd	(working copy)
+@@ -64,8 +64,14 @@
+ 		O_AUDIO_R             : out   std_logic;
+ 		--
+ 		I_SW                  : in    std_logic_vector(3 downto 0); -- active high
++                JS1_UP                : in    std_logic;
++                JS1_DOWN              : in    std_logic;
++                JS1_LEFT              : in    std_logic;
++                JS1_RIGHT             : in    std_logic;
++                JS1_FIRE1             : in    std_logic;
++                JS1_GND               : out   std_logic;
+ --		I_BUTTON              : in    std_logic_vector(3 downto 0);
+---		O_LED                 : out   std_logic_vector(3 downto 0);
++		O_LED                 : out   std_logic_vector(3 downto 0);
+ 		--
+ 		I_RESET               : in    std_logic;
+ 		CLK_IN                : in    std_logic
+@@ -74,9 +80,9 @@
+ 
+ architecture RTL of PACMAN is
+ 
+-	constant PACMAN         : std_logic := '1'; -- 1 for Pacman hardware, 0 for Pengo hardware
++	constant PACMAN         : std_logic := '0'; -- 1 for Pacman hardware, 0 for Pengo hardware
+ 	signal decoder_ena_l    : std_logic;
+-
++
+ 	signal I_RESET_L        : std_logic;
+ 	signal reset            : std_logic;
+ 	signal clk_ref          : std_logic;
+@@ -175,10 +181,10 @@
+ 	signal audio_pwm        : std_logic;
+ 
+ begin
+-	I_RESET_L <= not (I_SW(0) and I_SW(1) and I_SW(2) and I_SW(3));
+-
++
++  I_RESET_L <= '0';
+ --  comp_sync_l <= not ( vsync or hsync);
+---  O_COMP_SYNC_L <= comp_sync_l;
++--  O_COMP_SYNC_L <= comp_sync_l;
+ 	--
+ 	-- clocks
+ 	--
+@@ -252,7 +258,7 @@
+ 			end if;
+ 		end if;
+ 	end process;
+-
++
+ 	u_cpu : entity work.T80sed
+ 	port map (
+ 		RESET_n => watchdog_reset_l,
+@@ -274,7 +280,7 @@
+ 		DI      => cpu_data_in,
+ 		DO      => cpu_data_out
+ 	);
+-
++
+ 	--
+ 	-- cpu
+ 	--
+@@ -315,7 +321,7 @@
+ 			if (watchdog_cnt = "1111") then
+ 				watchdog_reset_l <= '0';
+ 			end if;
+-
++
+ 			-- simulation
+ 			-- pragma translate_off
+ 			-- synopsys translate_off
+@@ -336,7 +342,7 @@
+ 			cpu_ena <= hcnt(0);
+ 		end if;
+ 	end process;
+-
++
+ 	--
+ 	-- primary addr decode
+ 	--
+@@ -358,7 +364,7 @@
+ 			end if;
+ 
+ 		end if;
+-	end process;
++	end process;
+ 
+ 	--
+ 	-- sync bus custom ic
+@@ -396,7 +402,7 @@
+ 		if (sync_bus_cs_l = '0') and (hcnt(1) = '1') and (cpu_rd_l = '0') then
+ 			sync_bus_wreq_l <= '0';
+ 		end if;
+-	end process;
++	end process;
+  
+ 	--
+ 	-- vram addresser custom ic
+@@ -406,7 +412,7 @@
+ 		AB      => vram_addr_ab,
+ 		H       => hcnt,
+ 		V       => vcnt(7 downto 0),
+-		FLIP    => control_reg(3)
++		FLIP    => control_reg(3)
+ 	);
+ 
+ 	--When 2H is low, the CPU controls the bus.
+@@ -414,7 +420,7 @@
+ 
+ 	--  vram_l <= ( ( cpu_addr(12) or sync_bus_stb ) and not ( hcnt(1) and hcnt(0) ) );
+ 	vram_l <= ( ( cpu_addr(12) or sync_bus_stb ) and ( not hcnt(1) ) );
+-
++
+ 	-- PENGO                                                   PACMAN
+ 
+ 	-- WRITE
+@@ -430,20 +436,20 @@
+ 	-- dipsw1_l 0x9040 - 0x907F dip switch 1                   dipsw1_l 0x5080 - 0x50BF dip switches
+ 	-- in1_l    0x9080 - 0x90BF in port 1                      in1_l    0x5040 - 0x507F in port 1
+ 	-- in0_l    0x90C0 - 0x90FF in port 0                      in0_l    0x5000 - 0x503F in port 0
+-
+-	-- writes                                           <------------- PENGO ------------->    <------------- PACMAN ------------>
+-	wr0_l          <= '0' when sync_bus_r_w_l='0' and ( (PACMAN='0' and ab(7 downto 4)=x"0") or (PACMAN='1' and ab(7 downto 4)=x"4") ) and cpu_addr(12)='1' and sync_bus_stb='0' else '1'; -- wr voice 1,2,3 waveform
+-	wr1_l          <= '0' when sync_bus_r_w_l='0' and ( (PACMAN='0' and ab(7 downto 4)=x"1") or (PACMAN='1' and ab(7 downto 4)=x"5") ) and cpu_addr(12)='1' and sync_bus_stb='0' else '1'; -- wr voice 1,2,3 freq/vol
+-	wr2_l          <= '0' when sync_bus_r_w_l='0' and ( (PACMAN='0' and ab(7 downto 4)=x"2") or (PACMAN='1' and ab(7 downto 4)=x"6") ) and cpu_addr(12)='1' and sync_bus_stb='0' else '1'; -- wr sprites
+-	iodec_out_l    <= '0' when sync_bus_r_w_l='0' and ( (PACMAN='0' and ab(7 downto 4)=x"4") or (PACMAN='1' and ab(7 downto 6)="00") ) and cpu_addr(12)='1' and sync_bus_stb='0' else '1'; -- wr control space
+-	iodec_wdr_l    <= '0' when sync_bus_r_w_l='0' and ( (PACMAN='0' and ab(7 downto 4)=x"7") or (PACMAN='1' and ab(7 downto 6)="11") ) and cpu_addr(12)='1' and sync_bus_stb='0' else '1'; -- wr watchdog reset
+-                                                                                                                                        
+-	-- reads                                                                                                                             
+-	iodec_dipsw2_l <= '0' when sync_bus_r_w_l='1' and ( (PACMAN='0' and ab(7 downto 6)="00") or (PACMAN='1' and ab(7 downto 6)="11") ) and cpu_addr(12)='1' and sync_bus_stb='0' else '1'; -- rd in dip sw2
+-	iodec_dipsw1_l <= '0' when sync_bus_r_w_l='1' and ( (PACMAN='0' and ab(7 downto 6)="01") or (PACMAN='1' and ab(7 downto 6)="10") ) and cpu_addr(12)='1' and sync_bus_stb='0' else '1'; -- rd in dip sw1
+-	iodec_in1_l    <= '0' when sync_bus_r_w_l='1' and ( (PACMAN='0' and ab(7 downto 6)="10") or (PACMAN='1' and ab(7 downto 6)="01") ) and cpu_addr(12)='1' and sync_bus_stb='0' else '1'; -- rd in port 1 
+-	iodec_in0_l    <= '0' when sync_bus_r_w_l='1' and ( (PACMAN='0' and ab(7 downto 6)="11") or (PACMAN='1' and ab(7 downto 6)="00") ) and cpu_addr(12)='1' and sync_bus_stb='0' else '1'; -- rd in port 0 
+-
++
++	-- writes                                           <------------- PENGO ------------->    <------------- PACMAN ------------>
++	wr0_l          <= '0' when sync_bus_r_w_l='0' and ( (PACMAN='0' and ab(7 downto 4)=x"0") or (PACMAN='1' and ab(7 downto 4)=x"4") ) and cpu_addr(12)='1' and sync_bus_stb='0' else '1'; -- wr voice 1,2,3 waveform
++	wr1_l          <= '0' when sync_bus_r_w_l='0' and ( (PACMAN='0' and ab(7 downto 4)=x"1") or (PACMAN='1' and ab(7 downto 4)=x"5") ) and cpu_addr(12)='1' and sync_bus_stb='0' else '1'; -- wr voice 1,2,3 freq/vol
++	wr2_l          <= '0' when sync_bus_r_w_l='0' and ( (PACMAN='0' and ab(7 downto 4)=x"2") or (PACMAN='1' and ab(7 downto 4)=x"6") ) and cpu_addr(12)='1' and sync_bus_stb='0' else '1'; -- wr sprites
++	iodec_out_l    <= '0' when sync_bus_r_w_l='0' and ( (PACMAN='0' and ab(7 downto 4)=x"4") or (PACMAN='1' and ab(7 downto 6)="00") ) and cpu_addr(12)='1' and sync_bus_stb='0' else '1'; -- wr control space
++	iodec_wdr_l    <= '0' when sync_bus_r_w_l='0' and ( (PACMAN='0' and ab(7 downto 4)=x"7") or (PACMAN='1' and ab(7 downto 6)="11") ) and cpu_addr(12)='1' and sync_bus_stb='0' else '1'; -- wr watchdog reset
++                                                                                                                                        
++	-- reads                                                                                                                             
++	iodec_dipsw2_l <= '0' when sync_bus_r_w_l='1' and ( (PACMAN='0' and ab(7 downto 6)="00") or (PACMAN='1' and ab(7 downto 6)="11") ) and cpu_addr(12)='1' and sync_bus_stb='0' else '1'; -- rd in dip sw2
++	iodec_dipsw1_l <= '0' when sync_bus_r_w_l='1' and ( (PACMAN='0' and ab(7 downto 6)="01") or (PACMAN='1' and ab(7 downto 6)="10") ) and cpu_addr(12)='1' and sync_bus_stb='0' else '1'; -- rd in dip sw1
++	iodec_in1_l    <= '0' when sync_bus_r_w_l='1' and ( (PACMAN='0' and ab(7 downto 6)="10") or (PACMAN='1' and ab(7 downto 6)="01") ) and cpu_addr(12)='1' and sync_bus_stb='0' else '1'; -- rd in port 1 
++	iodec_in0_l    <= '0' when sync_bus_r_w_l='1' and ( (PACMAN='0' and ab(7 downto 6)="11") or (PACMAN='1' and ab(7 downto 6)="00") ) and cpu_addr(12)='1' and sync_bus_stb='0' else '1'; -- rd in port 0 
++
+ 	ps_reg <= control_reg(7) & control_reg(6) & control_reg(2) when PACMAN = '0' else "000";
+ 
+ 	p_control_reg : process
+@@ -496,7 +502,7 @@
+ 
+ 	-- simplifed again
+ 	cpu_data_in <=	cpu_vec_reg      when (cpu_iorq_l = '0') and (cpu_m1_l = '0') else
+-						sync_bus_reg     when (sync_bus_wreq_l = '0') else
++						sync_bus_reg     when (sync_bus_wreq_l = '0') else
+ 						rom_from_dec     when (PACMAN = '0' and cpu_addr(15) = '0') else  -- ROM at 0000 - 7fff (Pengo decoded)
+ 						program_rom_dinl when (PACMAN = '1' and cpu_addr(15 downto 14) = "00") else   -- ROM at 0000 - 3fff (Pacman/Pengo)
+ 						program_rom_dinh when (PACMAN = '1' and cpu_addr(15 downto 13) = "100") else  -- ROM at 8000 - 9fff (LizWiz)
+@@ -509,9 +515,9 @@
+ 	rom_to_dec <=	program_rom_dinl when cpu_addr(15 downto 14) = "00" else  -- ROM at 0000 - 3fff (Pengo)
+ 						program_rom_dinh when cpu_addr(15 downto 14) = "01" else  -- ROM at 4000 - 7fff (Pengo)
+ 						(others => '0');
+-
++
+ 	decoder_ena_l <= (PACMAN or cpu_addr(15));
+-
++
+ 	-- Sega ROM descrambler adapted from MAME segacrpt.c source code
+ 	u_sega_decode : entity work.sega_decode
+ 	port map (
+@@ -527,7 +533,7 @@
+ 		I_D      => rom_to_dec,
+ 		O_D      => rom_from_dec
+ 	);
+-
++
+   u_rams : entity work.PACMAN_RAMS
+ 	port map (
+ 		-- note, we get a one clock delay from our rams
+@@ -556,7 +562,7 @@
+ 		ADDR        => cpu_addr(13 downto 0),
+ 		DATA        => program_rom_dinh
+ 	);
+-
++
+ 	--
+ 	-- video subsystem
+ 	--
+@@ -571,7 +577,7 @@
+ 		I_HBLANK      => hblank,
+ 		I_VBLANK      => vblank,
+ 		I_FLIP        => control_reg(3),
+-		I_PS          => ps_reg,
++		I_PS          => ps_reg,
+ 		I_WR2_L       => wr2_l,
+ 		--
+ 		O_RED         => video_r,
+@@ -611,7 +617,7 @@
+ 		O_VIDEO_B <= video_b_x2 & "00";
+ 		O_HSYNC   <= hSync_X2;
+ 		O_VSYNC   <= vSync_X2;
+-
++
+ --		O_VIDEO_R <= video_r & '0';
+ --		O_VIDEO_G <= video_g & '0';
+ --		O_VIDEO_B <= video_b & "00";
+@@ -638,7 +644,7 @@
+ 		ENA_6         => ena_6,
+ 		CLK           => clk
+ 	);
+-
++
+ 	--
+ 	-- Audio DAC
+ 	--
+@@ -656,9 +662,19 @@
+ 	O_AUDIO_L <= audio_pwm;
+ 	O_AUDIO_R <= audio_pwm;
+ 
+-	button_in(7 downto 4) <= not (I_SW(3 downto 0) and (I_RESET & I_RESET & I_RESET & I_RESET));
+-	button_in(3 downto 0) <= not  I_SW(3 downto 0);
++        JS1_GND <= '0';
+ 
++        O_LED <= control_reg(7 downto 4);
++
++        button_in(0) <= not JS1_LEFT;
++        button_in(1) <= not JS1_UP;
++        button_in(2) <= not JS1_DOWN;
++        button_in(3) <= not JS1_RIGHT;
++        button_in(4) <= not JS1_FIRE1;
++        button_in(5) <= I_SW(0);    -- start1
++        button_in(6) <= I_SW(1);    -- start2
++        button_in(7) <= I_SW(2);    -- coin1
++
+ 	u_debounce : entity work.PACMAN_DEBOUNCE
+ 	generic map (
+ 		G_WIDTH => 8
+@@ -668,7 +684,7 @@
+ 		O_BUTTON => button_debounced,
+ 		CLK      => clk
+ 	);
+-
++
+ 	p_input_registers : process
+ 	begin
+ 		wait until rising_edge(clk);
+@@ -698,11 +714,11 @@
+ 				dipsw1_reg(6) <= '1';              -- difficulty ?
+ 				dipsw1_reg(5 downto 4) <= "00";    -- bonus pacman at 10K
+ 				dipsw1_reg(3 downto 2) <= "10";    -- pacman (3)
+-				dipsw1_reg(1 downto 0) <= "01";    -- cost  (1 coin, 1 play)
++				dipsw1_reg(1 downto 0) <= "01";    -- cost  (1 coin, 1 play)
+ 			else -- PENGO
+-				in0_reg(7) <= '1';                 -- p1 fire
++				in0_reg(7) <= button_debounced(4); -- p1 fire
+ 				in0_reg(6) <= '1';                 -- service
+-				in0_reg(5) <= button_debounced(4); -- coin2
++				in0_reg(5) <= '1';                 -- coin2
+ 				in0_reg(4) <= button_debounced(7); -- coin1
+ 				in0_reg(3) <= button_debounced(3); -- p1 right
+ 				in0_reg(2) <= button_debounced(0); -- p1 left
+@@ -727,8 +743,8 @@
+ 				dipsw1_reg(1) <= '0';              -- attrack sound on
+ 				dipsw1_reg(0) <= '0';              -- bonus at 30K
+ 
+-				dipsw2_reg <= "11001100";          -- 1 coin/1 play
+-			end if;
++				dipsw2_reg <= "11001100";          -- 1 coin/1 play
+ 		end if;
++		end if;
+ 	end process;
+ end RTL;

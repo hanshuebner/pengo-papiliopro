@@ -1,0 +1,193 @@
+# Papilio User Constraints File
+
+# Main board wing pin [] to FPGA pin Pxx map
+# -------C-------    -------B-------    ------A-------
+# [GND] [C00] P91    [GND] [B00] P85    P86  [A15]
+# [2V5] [C01] P92    [2V5] [B01] P83    P84  [A14]
+# [3V3] [C02] P94    [3V3] [B02] P78    P79  [A13]
+# [5V0] [C03] P95    [5V0] [B03] P71    P70  [A12]
+#       [C04] P98          [B04] P68    P67  [A11] [5V0]
+#       [C05] P2           [B05] P66    P65  [A10] [3V3]
+#       [C06] P3           [B06] P63    P62  [A09] [2V5]
+#       [C07] P4           [B07] P61    P60  [A08] [GND]
+# [GND] [C08] P5     [GND] [B08] P58    P57  [A07]
+# [2V5] [C09] P9     [2V5] [B09] P54    P53  [A06]
+# [3V3] [C10] P10    [3V3] [B10] P41    P40  [A05]
+# [5V0] [C11] P11    [5V0] [B11] P36    P35  [A04]
+#       [C12] P12          [B12] P34    P33  [A03] [5V0]
+#       [C13] P15          [B13] P32    P26  [A02] [3V3]
+#       [C14] P16          [B14] P25    P23  [A01] [2V5]
+#       [C15] P17          [B15] P22    P18  [A00] [GND]
+
+# Wing pin to FPGA pin map
+
+# Pin AH   BH   CH     VGA16  VGA8   Joystick   Audio   MicroSD  PS2     Button
+# 15  P86  P22  P17    R3     RED    UP         A1L     -        -       PB1
+# 14  P84  P25  P16    R2     GRN    DOWN       A1S     -        -       LED1
+# 13  P79  P32  P15    R1     -      LEFT       A1R     D2       -       PB2
+# 12  P70  P34  P12    R0     -      RIGHT      -       CS       -       LED2
+# 11  P67  P36  P11    G3     -      SELECT     -       SI       DAT2    PB3
+# 10  P65  P41  P10    G2     BLU    SW1        A2L     SCK      CLK2    LED3
+# 09  P62  P54  P9     G1     HS     SW2        A2S     SO       DAT1    PB4
+# 08  P60  P58  P5     G0     VS     LED        A2R     D1       CLK1    LED4
+
+# Pin AL   BL   CL     VGA16   VGA8   Joystick  Audio   MicroSD  PS2     Button
+# 07  P57  P61  P4     B3     RED    UP         A1L     -        -       PB1
+# 06  P53  P63  P3     B2     GRN    DOWN       A1S     -        -       LED1
+# 05  P40  P66  P2     B1     -      LEFT       A1R     D2       -       PB2
+# 04  P35  P68  P98    B0     -      RIGHT      -       CS       -       LED2
+# 03  P33  P71  P95    -      -      SELECT     -       SI       DAT2    PB3
+# 02  P26  P78  P94    -      BLU    SW1        A2L     SCK      CLK2    LED3
+# 01  P23  P83  P92    VS     HS     SW2        A2S     SO       DAT1    PB4
+# 00  P18  P85  P91    HS     VS     LED        A2R     D1       ClK1    LED4
+
+###########################################################
+# UCF File starts here, uncomment lines below as required #
+###########################################################
+#CONFIG PART=XC3S250E-VQ100-4 ;
+CONFIG PART=XC3S500E-VQ100-4 ;
+## Prohibit the automatic placement of pins that are connected to VCC or GND for configuration.
+CONFIG PROHIBIT=P99;
+CONFIG PROHIBIT=P43;
+CONFIG PROHIBIT=P42;
+CONFIG PROHIBIT=P39;
+CONFIG PROHIBIT=P49;
+CONFIG PROHIBIT=P48;
+CONFIG PROHIBIT=P47;
+
+NET CLK_IN TNM_NET=clk_ref_grp;
+#TIMESPEC TS01=PERIOD : clk_ref_grp : 31.25ns : PRIORITY 1;   # 32.00 MHz
+
+#TIMESPEC TS11=FROM:PADS:TO:FFS : 30 ns;
+#TIMESPEC TS12=FROM:FFS:TO:PADS : 30 ns;
+
+# Main oscillator 32.00 MHz
+NET "CLK_IN"             LOC="P89"  | IOSTANDARD=LVTTL | PERIOD=31.25ns ;
+
+# JTAG pins from FTDI2232
+#NET "JTAG_TMS"           LOC="P75"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ;
+#NET "JTAG_TCK"           LOC="P77"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ;
+#NET "JTAG_TDI"           LOC="P100" | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ;
+#NET "JTAG_TDO"           LOC="P76"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ;
+
+# RS232 pins from FTDI2232
+#NET "USB_TXD"            LOC="P88"  | IOSTANDARD=LVTTL | PULLUP;
+#NET "USB_RXD"            LOC="P90"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ;
+
+# Platform FLASH
+#NET "FLASH_CS"           LOC="P24"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ;
+#NET "FLASH_CK"           LOC="P50"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ;
+#NET "FLASH_SI"           LOC="P27"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ;
+#NET "FLASH_SO"           LOC="P44"  | IOSTANDARD=LVTTL | PULLUP;
+
+# Wing 1 pod A
+#NET "W1_AH15"            LOC="P86"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_AH14"            LOC="P84"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_AH13"            LOC="P79"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_AH12"            LOC="P70"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_AH11"            LOC="P67"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_AH10"            LOC="P65"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_AH09"            LOC="P62"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_AH08"            LOC="P60"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_AL07"            LOC="P57"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_AL06"            LOC="P53"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_AL05"            LOC="P40"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_AL04"            LOC="P35"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_AL03"            LOC="P33"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_AL02"            LOC="P26"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_AL01"            LOC="P23"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_AL00"            LOC="P18"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+
+# Wing 1 pod B
+#NET "W1_BH15"            LOC="P22"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_BH14"            LOC="P25"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_BH13"            LOC="P32"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_BH12"            LOC="P34"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_BH11"            LOC="P36"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_BH10"            LOC="P41"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_BH09"            LOC="P54"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_BH08"            LOC="P58"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_BL07"            LOC="P61"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_BL06"            LOC="P63"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_BL05"            LOC="P66"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_BL04"            LOC="P68"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_BL03"            LOC="P71"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_BL02"            LOC="P78"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_BL01"            LOC="P83"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_BL00"            LOC="P85"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+
+# Wing 2 pod C
+#NET "W2_CL00"            LOC="P91"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W2_CL01"            LOC="P92"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W2_CL02"            LOC="P94"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W2_CL03"            LOC="P95"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W2_CL04"            LOC="P98"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W2_CL05"            LOC="P2"   | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W2_CL06"            LOC="P3"   | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W2_CL07"            LOC="P4"   | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W2_CH08"            LOC="P5"   | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W2_CH09"            LOC="P9"   | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W2_CH10"            LOC="P10"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W2_CH11"            LOC="P11"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W2_CH12"            LOC="P12"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W2_CH13"            LOC="P15"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W2_CH14"            LOC="P16"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W2_CH15"            LOC="P17"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+
+# Papilio Arcade MegaWing specific pins
+
+# Wing 1 pod A
+NET "O_AUDIO_L"          LOC="P86"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+NET "O_AUDIO_R"          LOC="P84"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "PS2CLK1"            LOC="P79"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "PS2DAT1"            LOC="P70"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+NET "I_RESET"            LOC="P67"  | IOSTANDARD=LVTTL | PULLDOWN            ; # active high
+#NET "W1_AH10"            LOC="P65"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_AH09"            LOC="P62"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "W1_AH08"            LOC="P60"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "O_LED<0>"           LOC="P57"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; # active high
+#NET "O_LED<1>"           LOC="P53"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; # active high
+#NET "O_LED<2>"           LOC="P40"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; # active high
+#NET "O_LED<3>"           LOC="P35"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; # active high
+#NET "JS1_5"              LOC="P33"  | IOSTANDARD=LVTTL | PULLDOWN            ; # active high
+#NET "JS1_9"              LOC="P26"  | IOSTANDARD=LVTTL | PULLDOWN            ; # active high
+#NET "JS1_4"              LOC="P23"  | IOSTANDARD=LVTTL | PULLDOWN            ; # active high
+#NET "JS1_8"              LOC="P18"  | IOSTANDARD=LVTTL | PULLDOWN            ; # active high
+
+# Wing 1 pod B
+#NET "JS1_3"              LOC="P22"  | IOSTANDARD=LVTTL | PULLDOWN            ; # active high
+#NET "JS1_2"              LOC="P25"  | IOSTANDARD=LVTTL | PULLDOWN            ; # active high
+#NET "JS1_6"              LOC="P32"  | IOSTANDARD=LVTTL | PULLDOWN            ; # active high
+#NET "JS1_1"              LOC="P34"  | IOSTANDARD=LVTTL | PULLDOWN            ; # active high
+NET "I_SW<3>"            LOC="P36"  | IOSTANDARD=LVTTL | PULLDOWN            ; # active high
+NET "I_SW<2>"            LOC="P41"  | IOSTANDARD=LVTTL | PULLDOWN            ; # active high
+NET "I_SW<1>"            LOC="P54"  | IOSTANDARD=LVTTL | PULLDOWN            ; # active high
+NET "I_SW<0>"            LOC="P58"  | IOSTANDARD=LVTTL | PULLDOWN            ; # active high
+NET "O_VIDEO_G<3>"       LOC="P61"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+NET "O_VIDEO_G<2>"       LOC="P63"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+NET "O_VIDEO_G<1>"       LOC="P66"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+NET "O_VIDEO_G<0>"       LOC="P68"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+NET "O_VIDEO_B<3>"       LOC="P71"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+NET "O_VIDEO_B<2>"       LOC="P78"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+NET "O_VIDEO_B<1>"       LOC="P83"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+NET "O_VIDEO_B<0>"       LOC="P85"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+
+# Wing 2 pod C
+#NET "PS2DAT2"            LOC="P91"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "PS2CLK2"            LOC="P92"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+NET "O_VSYNC"            LOC="P94"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+NET "O_HSYNC"            LOC="P95"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+NET "O_VIDEO_R<0>"       LOC="P98"  | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+NET "O_VIDEO_R<1>"       LOC="P2"   | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+NET "O_VIDEO_R<2>"       LOC="P3"   | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+NET "O_VIDEO_R<3>"       LOC="P4"   | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST ; #
+#NET "JS2_1"              LOC="P5"   | IOSTANDARD=LVTTL | PULLDOWN            ; # active high
+#NET "JS2_6"              LOC="P9"   | IOSTANDARD=LVTTL | PULLDOWN            ; # active high
+#NET "JS2_2"              LOC="P10"  | IOSTANDARD=LVTTL | PULLDOWN            ; # active high
+#NET "JS2_3"              LOC="P11"  | IOSTANDARD=LVTTL | PULLDOWN            ; # active high
+#NET "JS2_8"              LOC="P12"  | IOSTANDARD=LVTTL | PULLDOWN            ; # active high
+#NET "JS2_4"              LOC="P15"  | IOSTANDARD=LVTTL | PULLDOWN            ; # active high
+#NET "JS2_9"              LOC="P16"  | IOSTANDARD=LVTTL | PULLDOWN            ; # active high
+#NET "JS2_5"              LOC="P17"  | IOSTANDARD=LVTTL | PULLDOWN            ; # active high
+
+# End of Section for Papilio Arcade MegaWing
