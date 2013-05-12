@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <report-views version="2.0" >
  <header>
-  <DateModified>2013-05-09T11:08:38</DateModified>
+  <DateModified>2013-05-11T09:14:39</DateModified>
   <ModuleName>PACMAN</ModuleName>
-  <SummaryTimeStamp>2013-05-09T01:43:48</SummaryTimeStamp>
+  <SummaryTimeStamp>2013-05-11T09:14:39</SummaryTimeStamp>
   <SavedFilePath>C:/Users/Hans/fpga/pengo-papilioplus/iseconfig/PACMAN.xreport</SavedFilePath>
   <ImplementationReportsDirectory>C:/Users/Hans/fpga/pengo-papilioplus/build\</ImplementationReportsDirectory>
   <DateInitialized>2013-04-13T09:48:37</DateInitialized>
